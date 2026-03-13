@@ -9,6 +9,9 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn]   = useState(false);
 
+  // Vercel Environment Variable থেকে API URL টি নেওয়া হচ্ছে
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const handleLogin = async (e) => {
     e.preventDefault();
     const email    = e.target.email.value;
@@ -17,7 +20,8 @@ const Login = () => {
     setIsLoggingIn(true);
 
     try {
-      const res  = await fetch("http://localhost:5000/admin/login", {
+      // লোকালহোস্টের বদলে API_URL ব্যবহার করা হয়েছে
+      const res = await fetch(`${API_URL}/admin/login`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ email, password }),
@@ -32,7 +36,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login Error:", error);
-      Swal.fire("Error", "সার্ভারে সমস্যা হয়েছে।", "error");
+      Swal.fire("Error", "সার্ভারে সমস্যা হয়েছে। কোড আপডেট করে পুশ করুন।", "error");
     } finally {
       setIsLoggingIn(false);
     }
