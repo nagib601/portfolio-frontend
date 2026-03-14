@@ -1,4 +1,4 @@
-import { StrictMode, useEffect } from 'react' // useEffect যোগ করা হয়েছে
+import { StrictMode, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import { RouterProvider } from 'react-router-dom'
@@ -7,14 +7,19 @@ import { ThemeProvider } from './context/ThemeContext'
 
 const AppRunner = () => {
   useEffect(() => {
-    // ওয়েবসাইট ভিজিট করলেই ব্যাকএন্ডে ট্র্যাকিং ডাটা পাঠাবে
     const API_URL = import.meta.env.VITE_API_URL;
     
     const trackVisitor = async () => {
       try {
+        // বর্তমান পেজের নাম বের করা
+        const currentPath = window.location.pathname;
+        const pageName = currentPath === '/' ? 'Home' : 
+                         currentPath.replace('/', '').charAt(0).toUpperCase() + currentPath.slice(2);
+
         await fetch(`${API_URL}/admin/viewers/track`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pageName }) // পেজ নাম পাঠানো হচ্ছে
         });
       } catch (error) {
         console.error("Tracking Error:", error);
@@ -22,7 +27,7 @@ const AppRunner = () => {
     };
 
     trackVisitor();
-  }, []);
+  }, []); // এটি ওয়েবসাইট লোড হলে একবার চলবে
 
   return <RouterProvider router={Routes} />;
 };
@@ -32,5 +37,5 @@ createRoot(document.getElementById('root')).render(
     <ThemeProvider>
       <AppRunner />
     </ThemeProvider>
-  </StrictMode>,
-)
+  </StrictMode>
+);

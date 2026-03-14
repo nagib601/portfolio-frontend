@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { FiUsers, FiLayers, FiPlus, FiTrash2, FiActivity } from 'react-icons/fi';
+import { FiUsers, FiLayers, FiPlus, FiTrash2, FiActivity, FiMonitor } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 
-const Dashboard = () => {
-  const [stats, setStats] = useState({ total: 0, today: 0, totalProjects: 0 });
+const AdminDashboard = () => {
+  const [stats, setStats] = useState({ total: 0, today: 0, totalProjects: 0, viewers: [] });
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -96,13 +96,66 @@ const Dashboard = () => {
           <StatCard label="Live Projects" value={stats.totalProjects} icon={<FiLayers className="text-amber-400" />} color="amber" />
         </div>
 
+        {/* Visitor Tracking Table */}
+        <div className="bg-[#0f0f0f] border border-gray-900 rounded-3xl p-6 shadow-2xl mb-12">
+          <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <span className="w-2 h-6 bg-emerald-500 rounded-full"></span>
+            Real-time Visitor Logs
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="text-gray-500 text-sm border-b border-gray-800">
+                  <th className="pb-4 font-medium px-4">Device Info</th>
+                  <th className="pb-4 font-medium px-4">IP Address</th>
+                  <th className="pb-4 font-medium px-4">Pages (Path)</th>
+                  <th className="pb-4 font-medium px-4 text-right">Last Visit</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-900">
+                {stats.viewers && stats.viewers.length > 0 ? (
+                  stats.viewers.slice(0, 10).map((viewer, idx) => (
+                    <tr key={idx} className="text-sm hover:bg-white/[0.02] transition-colors">
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-3">
+                          <FiMonitor className="text-gray-500" />
+                          <div>
+                            <div className="font-bold text-gray-200">{viewer.device}</div>
+                            <div className="text-[10px] text-gray-500 uppercase tracking-tighter">{viewer.browser} • {viewer.os}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 font-mono text-blue-400/80">{viewer.ip}</td>
+                      <td className="py-4 px-4">
+                        <div className="flex flex-wrap gap-1">
+                          {viewer.pagesViewed && viewer.pagesViewed.map((p, i) => (
+                            <span key={i} className="text-[10px] bg-gray-900 text-gray-400 px-2 py-0.5 rounded border border-gray-800">
+                              {p}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-right text-gray-500 font-mono">
+                        {new Date(viewer.viewedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="py-10 text-center text-gray-600 italic">No visitor logs found.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         {/* Project List */}
         <div className="bg-[#0f0f0f] border border-gray-900 rounded-3xl p-6 shadow-2xl">
           <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
             <span className="w-2 h-6 bg-blue-600 rounded-full"></span>
             Project Management
           </h2>
-          
           <div className="space-y-4">
             {loading ? (
               <div className="text-center py-10 opacity-50 italic">Fetching from database...</div>
@@ -180,4 +233,4 @@ const StatCard = ({ label, value, icon, color }) => (
   </div>
 );
 
-export default Dashboard;
+export default AdminDashboard;
