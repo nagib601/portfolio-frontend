@@ -3,7 +3,8 @@ import { Navigate } from "react-router-dom";
 const PrivateRoutes = ({ children }) => {
   const isAdmin = localStorage.getItem("isAdmin");
 
-  if (!isAdmin) return <Navigate to="/login" replace />;
+  // Redirect to /admin/login instead of /login
+  if (!isAdmin) return <Navigate to="/admin/login" replace />;
 
   return children;
 };

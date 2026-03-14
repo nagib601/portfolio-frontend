@@ -16,11 +16,12 @@ const Routes = createBrowserRouter([
     path: "/",
     element: <Root />,
     children: [
-      { path: "/",         element: <Home />     },
-      { path: "/about",    element: <About />    },
-      { path: "/projects", element: <Projects /> },
-      { path: "/contact",  element: <Contact />  },
-      { path: "/login",    element: <Login />    },
+      { path: "/",          element: <Home />     },
+      { path: "about",      element: <About />    },
+      { path: "projects",   element: <Projects /> },
+      { path: "contact",    element: <Contact />  },
+      // লগইন পাথটি /admin/login রাখাই বুদ্ধিমানের কাজ
+      { path: "admin/login", element: <Login />    }, 
     ],
   },
   {
@@ -31,9 +32,11 @@ const Routes = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { path: "dashboard",        element: <Dashboard />      },
-      { path: "manage-projects",  element: <ManageProjects /> },
-      { path: "viewers",          element: <ViewersPage />    },
+      // /admin লিখলে সরাসরি ড্যাশবোর্ড দেখাবে (ঐচ্ছিক)
+      { index: true,               element: <Dashboard />      }, 
+      { path: "dashboard",         element: <Dashboard />      },
+      { path: "manage-projects",   element: <ManageProjects /> },
+      { path: "viewers",           element: <ViewersPage />    },
     ],
   },
 ]);

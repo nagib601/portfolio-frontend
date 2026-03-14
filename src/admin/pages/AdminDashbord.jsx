@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { FiUsers, FiLayers, FiPlus, FiTrash2, FiActivity } from 'react-icons/fi'; // icons install: npm install react-icons
+import { FiUsers, FiLayers, FiPlus, FiTrash2, FiActivity } from 'react-icons/fi';
+import Swal from 'sweetalert2';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({ total: 0, today: 0, totalProjects: 0 });
@@ -8,12 +9,13 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newProject, setNewProject] = useState({ title: '', image: '', link: '', description: '' });
 
-  // সব ডেটা একসাথে ফেচ করা
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const fetchData = async () => {
     try {
       const [statsRes, projRes] = await Promise.all([
-        fetch('http://localhost:5000/admin/viewers/stats'),
-        fetch('http://localhost:5000/admin/viewers/all-projects')
+        fetch(`${API_URL}/admin/viewers/stats`),
+        fetch(`${API_URL}/admin/projects/all`)
       ]);
       const statsData = await statsRes.json();
       const projData = await projRes.json();
@@ -31,11 +33,10 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  // প্রজেক্ট অ্যাড করা
   const handleAddProject = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/admin/viewers/add-project', {
+      const res = await fetch(`${API_URL}/admin/projects/add`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newProject)
@@ -43,19 +44,29 @@ const Dashboard = () => {
       if (res.ok) {
         setIsModalOpen(false);
         setNewProject({ title: '', image: '', link: '', description: '' });
+        Swal.fire("Success", "Project added!", "success");
         fetchData();
       }
     } catch (err) {
-      alert("Error adding project");
+      Swal.fire("Error", "Could not add project", "error");
     }
   };
 
-  // প্রজেক্ট ডিলিট করা
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete?")) {
-      await fetch(`http://localhost:5000/admin/viewers/delete-project/${id}`, { method: 'DELETE' });
-      fetchData();
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await fetch(`${API_URL}/admin/projects/delete/${id}`, { method: 'DELETE' });
+        fetchData();
+      }
+    });
   };
 
   return (
@@ -85,7 +96,7 @@ const Dashboard = () => {
           <StatCard label="Live Projects" value={stats.totalProjects} icon={<FiLayers className="text-amber-400" />} color="amber" />
         </div>
 
-        {/* Project List Section */}
+        {/* Project List */}
         <div className="bg-[#0f0f0f] border border-gray-900 rounded-3xl p-6 shadow-2xl">
           <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
             <span className="w-2 h-6 bg-blue-600 rounded-full"></span>
@@ -117,7 +128,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Add Project Modal */}
+        {/* Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
             <div className="bg-[#111111] border border-gray-800 w-full max-w-xl rounded-[2rem] overflow-hidden shadow-3xl">
@@ -128,29 +139,27 @@ const Dashboard = () => {
               <form onSubmit={handleAddProject} className="p-8 space-y-5">
                 <input 
                   type="text" placeholder="Project Name" required
-                  className="w-full bg-[#0a0a0a] border border-gray-800 p-4 rounded-2xl focus:border-blue-500 outline-none transition-all"
+                  className="w-full bg-[#0a0a0a] border border-gray-900 p-4 rounded-2xl focus:border-blue-500 outline-none transition-all text-white"
                   value={newProject.title} onChange={(e)=>setNewProject({...newProject, title: e.target.value})}
                 />
                 <input 
                   type="text" placeholder="Thumbnail Image URL" required
-                  className="w-full bg-[#0a0a0a] border border-gray-800 p-4 rounded-2xl focus:border-blue-500 outline-none transition-all"
+                  className="w-full bg-[#0a0a0a] border border-gray-900 p-4 rounded-2xl focus:border-blue-500 outline-none transition-all text-white"
                   value={newProject.image} onChange={(e)=>setNewProject({...newProject, image: e.target.value})}
                 />
                 <input 
                   type="text" placeholder="Live URL or Repository Link" required
-                  className="w-full bg-[#0a0a0a] border border-gray-800 p-4 rounded-2xl focus:border-blue-500 outline-none transition-all"
+                  className="w-full bg-[#0a0a0a] border border-gray-900 p-4 rounded-2xl focus:border-blue-500 outline-none transition-all text-white"
                   value={newProject.link} onChange={(e)=>setNewProject({...newProject, link: e.target.value})}
                 />
                 <textarea 
                   placeholder="Tell something about this project..." rows="3" required
-                  className="w-full bg-[#0a0a0a] border border-gray-800 p-4 rounded-2xl focus:border-blue-500 outline-none transition-all"
+                  className="w-full bg-[#0a0a0a] border border-gray-900 p-4 rounded-2xl focus:border-blue-500 outline-none transition-all text-white"
                   value={newProject.description} onChange={(e)=>setNewProject({...newProject, description: e.target.value})}
                 ></textarea>
-                <div className="flex gap-4 pt-4">
-                  <button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all">
-                    PUSH TO DATABASE
-                  </button>
-                </div>
+                <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all">
+                  PUSH TO DATABASE
+                </button>
               </form>
             </div>
           </div>
@@ -160,7 +169,6 @@ const Dashboard = () => {
   );
 };
 
-// ছোট কার্ড কম্পোনেন্ট
 const StatCard = ({ label, value, icon, color }) => (
   <div className="bg-[#0f0f0f] border border-gray-900 p-6 rounded-3xl shadow-xl transition-transform hover:scale-[1.02]">
     <div className="flex justify-between items-start mb-4">
