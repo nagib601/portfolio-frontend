@@ -108,7 +108,7 @@ const Projects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:5000/admin/projects/all');
+        const res = await fetch('http://portfolio-backend-flax-mu.vercel.app/admin/projects/all');
         const data = await res.json();
         if (data.success) {
           setDbProjects(data.projects);
