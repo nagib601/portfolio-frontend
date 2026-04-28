@@ -11,13 +11,14 @@ const ManageProjects = () => {
     title: '', image: '', link: '', description: '', tech: '', video: '' 
   });
 
-  const API_BASE = "portfolio-backend-flax-mu.vercel.app";
+  // ✅ Thik kora API Link (https:// ebong /admin shoho)
+  const API_BASE = "https://portfolio-backend-flax-mu.vercel.app/admin";
 
   const fetchData = async () => {
     try {
       const [statsRes, projRes] = await Promise.all([
         fetch(`${API_BASE}/viewers/stats`),
-        fetch(`${API_BASE}/projects/all`) // Updated Route
+        fetch(`${API_BASE}/projects/all`)
       ]);
       const statsData = await statsRes.json();
       const projData = await projRes.json();
