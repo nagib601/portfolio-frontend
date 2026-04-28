@@ -6,7 +6,7 @@ const ProjectCard = ({ project }) => {
   const { isDark } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
 
-  // টেক স্ট্যাক যদি স্ট্রিং হিসেবে থাকে তবে কমা দিয়ে ভাগ করে অ্যারে বানানো
+  // টেক স্ট্যাক যদি স্ট্রিং হিসেবে থাকে তবে কমা দিয়ে ভাগ করে অ্যারে বানানো
   const techStack = project.tech 
     ? project.tech.split(',').map(item => item.trim()) 
     : ["MERN", "React", "Node.js"];
@@ -104,11 +104,12 @@ const Projects = () => {
   const [dbProjects, setDbProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ডেটাবেস থেকে প্রজেক্ট নিয়ে আসা
+  // ডেটাবেস থেকে প্রজেক্ট নিয়ে আসা
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://portfolio-backend-flax-mu.vercel.app/admin/projects/all');
+        // ✅ Ekhane 'http' er bodole 'https' kora hoyeche
+        const res = await fetch('https://portfolio-backend-flax-mu.vercel.app/admin/projects/all');
         const data = await res.json();
         if (data.success) {
           setDbProjects(data.projects);
