@@ -11,7 +11,7 @@ const ManageProjects = () => {
     title: '', image: '', link: '', description: '', tech: '', video: '' 
   });
 
-  const API_BASE = "https://tomar-live-backend-link.vercel.app/admin";
+  const API_BASE = "portfolio-backend-flax-mu.vercel.app";
 
   const fetchData = async () => {
     try {
