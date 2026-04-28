@@ -1,17 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { useTheme } from '../context/ThemeContext';
+import { useTheme } from '../context/ThemeContext'; // Path thik thakle change korben na
 import { ExternalLink, Github } from 'lucide-react';
 
 const ProjectCard = ({ project }) => {
   const { isDark } = useTheme();
   const [isHovered, setIsHovered] = useState(false);
 
-  // টেক স্ট্যাক যদি ডেটাবেসে স্ট্রিং হিসেবে থাকে তবে তাকে অ্যারে করা
-  const techStack = Array.isArray(project.tech) ? project.tech : ["MERN", "React", "Node.js"];
+  // টেক স্ট্যাক যদি স্ট্রিং হিসেবে থাকে তবে কমা দিয়ে ভাগ করে অ্যারে বানানো
+  const techStack = project.tech 
+    ? project.tech.split(',').map(item => item.trim()) 
+    : ["MERN", "React", "Node.js"];
+
+  // Card e click korle link open korar function
+  const handleCardClick = () => {
+    if (project.link) {
+      window.open(project.link, '_blank');
+    }
+  };
 
   return (
     <div
-      className={`group relative flex flex-col overflow-hidden rounded-3xl transition-all duration-500 hover:-translate-y-2 
+      onClick={handleCardClick}
+      className={`cursor-pointer group relative flex flex-col overflow-hidden rounded-3xl transition-all duration-500 hover:-translate-y-2 
       ${project.featured ? 'md:col-span-2 md:row-span-2' : 'col-span-1'}
       ${
         isDark
@@ -29,7 +39,7 @@ const ProjectCard = ({ project }) => {
           className={`h-full w-full object-cover transition-transform duration-700 ${isHovered ? 'scale-110' : 'scale-100'}`}
         />
         
-        {/* Video Preview (যদি থাকে) */}
+        {/* Video Preview */}
         {project.video && isHovered && (
           <div className="absolute inset-0 bg-black/20">
             <video
@@ -42,11 +52,22 @@ const ProjectCard = ({ project }) => {
 
         {/* Hover Action Buttons */}
         <div className={`absolute inset-0 flex items-center justify-center gap-4 transition-all duration-500 bg-black/40 backdrop-blur-sm ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
-          <a href={project.link} target="_blank" rel="noreferrer" className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--accent)] text-white hover:scale-110 transition-transform">
+          <a 
+            href={project.link} 
+            target="_blank" 
+            rel="noreferrer" 
+            onClick={(e) => e.stopPropagation()} // Eta add kora hoyeche jate button e click korle double click na hoy
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--accent)] text-white hover:scale-110 transition-transform"
+          >
             <ExternalLink size={20} />
           </a>
-          {/* যদি গিথুব লিঙ্ক আলাদা থাকে তবে এখানে দেবেন, নাহলে লিঙ্ক ব্যবহার করবেন */}
-          <a href={project.link} target="_blank" rel="noreferrer" className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black hover:scale-110 transition-transform">
+          <a 
+            href={project.link} 
+            target="_blank" 
+            rel="noreferrer" 
+            onClick={(e) => e.stopPropagation()}
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black hover:scale-110 transition-transform"
+          >
             <Github size={20} />
           </a>
         </div>
@@ -58,7 +79,7 @@ const ProjectCard = ({ project }) => {
           {project.title}
         </h3>
         <p className={`mb-6 flex-grow text-sm md:text-base ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
-          {project.description}
+          {project.description || "No description provided."}
         </p>
 
         {/* Tech Stack */}
@@ -87,7 +108,7 @@ const Projects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await fetch('http://localhost:5000/admin/viewers/all-projects');
+        const res = await fetch('http://localhost:5000/admin/projects/all');
         const data = await res.json();
         if (data.success) {
           setDbProjects(data.projects);
@@ -116,7 +137,6 @@ const Projects = () => {
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(0,_1fr)]">
         {dbProjects.map((project, index) => (
-          // প্রথম প্রজেক্টটিকে featured স্টাইল দেওয়ার জন্য (ঐচ্ছিক)
           <ProjectCard key={project._id} project={{...project, featured: index === 0}} />
         ))}
         

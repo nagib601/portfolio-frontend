@@ -104,9 +104,15 @@ const ManageProjects = () => {
                 <input type="text" placeholder="Title" required className="w-full bg-black border border-gray-800 p-3 rounded-lg focus:border-blue-500 outline-none text-sm" value={project.title} onChange={(e)=>setProject({...project, title: e.target.value})} />
                 <input type="text" placeholder="Image URL" required className="w-full bg-black border border-gray-800 p-3 rounded-lg focus:border-blue-500 outline-none text-sm" value={project.image} onChange={(e)=>setProject({...project, image: e.target.value})} />
                 <input type="text" placeholder="Live/Github Link" required className="w-full bg-black border border-gray-800 p-3 rounded-lg focus:border-blue-500 outline-none text-sm" value={project.link} onChange={(e)=>setProject({...project, link: e.target.value})} />
-                <input type="text" placeholder="Tech (e.g. React, Node, Tailwind)" className="w-full bg-black border border-gray-800 p-3 rounded-lg focus:border-blue-500 outline-none text-sm" value={project.tech} onChange={(e)=>setProject({...project, tech: e.target.value})} />
+                
+                {/* Tech input: Added (Optional) to placeholder */}
+                <input type="text" placeholder="Tech (e.g. React, Node) (Optional)" className="w-full bg-black border border-gray-800 p-3 rounded-lg focus:border-blue-500 outline-none text-sm" value={project.tech} onChange={(e)=>setProject({...project, tech: e.target.value})} />
+                
                 <input type="text" placeholder="Video URL (Optional)" className="w-full bg-black border border-gray-800 p-3 rounded-lg focus:border-blue-500 outline-none text-sm" value={project.video} onChange={(e)=>setProject({...project, video: e.target.value})} />
-                <textarea placeholder="Description..." rows="3" required className="w-full bg-black border border-gray-800 p-3 rounded-lg focus:border-blue-500 outline-none text-sm" value={project.description} onChange={(e)=>setProject({...project, description: e.target.value})} />
+                
+                {/* Description textarea: Removed 'required' attribute and added (Optional) to placeholder */}
+                <textarea placeholder="Description... (Optional)" rows="3" className="w-full bg-black border border-gray-800 p-3 rounded-lg focus:border-blue-500 outline-none text-sm" value={project.description} onChange={(e)=>setProject({...project, description: e.target.value})} />
+                
                 <button type="submit" className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg transition-all shadow-lg">
                   PUSH_TO_PRODUCTION
                 </button>
