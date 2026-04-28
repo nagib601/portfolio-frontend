@@ -11,7 +11,7 @@ const ManageProjects = () => {
     title: '', image: '', link: '', description: '', tech: '', video: '' 
   });
 
-  const API_BASE = "http://localhost:5000/admin";
+  const API_BASE = "https://tomar-live-backend-link.vercel.app/admin";
 
   const fetchData = async () => {
     try {
